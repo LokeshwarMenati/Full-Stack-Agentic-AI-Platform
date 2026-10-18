@@ -15,7 +15,9 @@ import type {
   WorkflowReplayResponse
 } from '../types';
 
-const API_BASE = '/api';
+const RAW_BASE = import.meta.env.VITE_API_BASE_URL ? import.meta.env.VITE_API_BASE_URL.replace(/\/+$/, '') : '';
+const API_BASE = RAW_BASE ? `${RAW_BASE}/api` : '/api';
+const HEALTH_BASE = RAW_BASE ? `${RAW_BASE}/health` : '/health';
 
 export class ApiError extends Error {
   status: number;
@@ -55,7 +57,7 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
 
 export const api = {
   // Health
-  getHealth: () => fetch('/health').then(r => r.json()),
+  getHealth: () => fetch(HEALTH_BASE).then(r => r.json()),
   getReadiness: () => request<{ ready: boolean; database: string; vector_store: string; indexed_chunks: number; llm_provider: string }>('/health/ready'),
 
   // Chat
