@@ -46,6 +46,7 @@ The flagship capability of NEXUS AI is **Context Interleaving**: the ability to 
 27. [AI Engineering Log](#27-ai-engineering-log)
 28. [Final Verification Checklist](#28-final-verification-checklist)
 29. [Voice Conversation System Architecture](#29-voice-conversation-system-architecture)
+30. [Enterprise Agent Operating System Architecture](#30-enterprise-agent-operating-system-architecture)
 
 ---
 
@@ -495,69 +496,321 @@ All settings are managed via Pydantic Settings in `backend/app/core/config.py`.
 
 ## 17. Installation & Setup
 
-### Prerequisites
-- Python 3.10+ (Python 3.11 or 3.12 recommended)
-- Node.js 18+ and npm 9+
-- Git
+### Quick Start (TL;DR)
+If you already have Python 3.11+ and Node.js 18+ installed, run this sequence:
 
-### 1. Clone the Repository
 ```bash
-git clone <repository-url>
-cd "Full-Stack Agentic AI Platform"
+# 1. Clone repository and enter directory
+git clone https://github.com/LokeshwarMenati/Full-Stack-Agentic-AI-Platform.git
+cd Full-Stack-Agentic-AI-Platform
+
+# 2. Copy environment file (Zero-API deterministic mode works out-of-the-box)
+cp .env.example .env
+
+# 3. Setup backend, ingest PDFs, and seed appointment database
+cd backend
+python -m venv .venv
+# Windows: .venv\Scripts\activate | macOS/Linux: source .venv/bin/activate
+pip install -r requirements.txt
+python -m app.rag.ingest
+python ../scripts/seed_data.py
+
+# 4. Start backend (Terminal 1)
+uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload
+
+# 5. Start frontend (Terminal 2)
+cd ../frontend
+npm install
+npm run dev
+# Open http://localhost:5173
 ```
 
-### 2. Configure Environment
+---
+
+### Detailed Prerequisites & Environment Requirements
+
+| Requirement | Supported Versions | Notes |
+|---|---|---|
+| **Python** | `3.10`, `3.11`, `3.12` | Python 3.11 or 3.12 recommended. Ensure `pip` is updated (`python -m pip install --upgrade pip`). |
+| **Node.js** | `18+`, `20+`, `22+` | Tested with Node v20/v22 LTS and npm 9+. |
+| **Git** | `2.30+` | Required for cloning the repository. |
+| **Operating System** | Windows 10/11, macOS, Linux (Ubuntu 20.04+) | Platform-specific commands for PowerShell, CMD, and Bash are provided below. |
+| **Optional: Docker** | Docker Engine 24+, Compose v2 | Only required if running via containerized deployment. |
+
+---
+
+### Step 1: Clone the Repository
+
+Clone the project from GitHub and navigate into the root directory:
+
+```bash
+git clone https://github.com/LokeshwarMenati/Full-Stack-Agentic-AI-Platform.git
+cd Full-Stack-Agentic-AI-Platform
+```
+
+---
+
+### Step 2: Configure Environment Variables
+
+Create your local `.env` file from the provided `.env.example`:
+
+**On Linux / macOS / Git Bash:**
 ```bash
 cp .env.example .env
 ```
+
+**On Windows PowerShell:**
+```powershell
+Copy-Item .env.example .env
+```
+
+**On Windows Command Prompt (CMD):**
+```cmd
+copy .env.example .env
+```
+
+#### Selecting Your Operating Mode
+
+Open `.env` in your text editor. NEXUS AI supports both offline zero-dependency mode and live LLM cloud providers:
+
+1. **Deterministic Dev Mode (Default & Recommended for Testing)**:
+   - Requires **no external API keys** and costs $0.
+   - Uses local dense TF-IDF vector embeddings for RAG and a deterministic rule engine for intent routing.
+   - Settings in `.env`:
+     ```env
+     LLM_PROVIDER=mock
+     LLM_MODEL=nexus-dev-deterministic
+     EMBEDDING_PROVIDER=local
+     ```
+
+2. **Groq Cloud Mode (Fast Inference & Groq Whisper STT)**:
+   - In `.env`, set:
+     ```env
+     LLM_PROVIDER=groq
+     LLM_MODEL=llama-3.3-70b-versatile
+     GROQ_API_KEY=gsk_your_actual_groq_api_key
+     ```
+
+3. **Google Gemini Mode**:
+   - In `.env`, set:
+     ```env
+     LLM_PROVIDER=gemini
+     LLM_MODEL=gemini-1.5-flash
+     GOOGLE_API_KEY=AIzaSy_your_gemini_api_key
+     ```
 
 ---
 
 ## 18. Database Initialization & Ingestion
 
-### Backend Virtual Environment & Dependencies
+### Step 1: Create & Activate Backend Virtual Environment
+
+Navigate to the `backend` directory and set up an isolated Python virtual environment:
+
 ```bash
 cd backend
 python -m venv .venv
+```
 
-# On Windows:
-.venv\Scripts\activate
-# On Linux/macOS:
-# source .venv/bin/activate
+**Activate the virtual environment**:
 
+- **Windows PowerShell**:
+  ```powershell
+  .venv\Scripts\Activate.ps1
+  ```
+  *(Note: If you receive a script execution policy error, run `Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass` and try again).*
+
+- **Windows Command Prompt (CMD)**:
+  ```cmd
+  .venv\Scripts\activate.bat
+  ```
+
+- **Linux / macOS**:
+  ```bash
+  source .venv/bin/activate
+  ```
+
+*(Your terminal prompt should now show `(.venv)`).*
+
+---
+
+### Step 2: Install Backend Dependencies
+
+Upgrade `pip` and install all required Python packages:
+
+```bash
+python -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-### Ingest Documents into Vector Store
+*(On Windows, `tzdata` is automatically installed via `requirements.txt` to guarantee IANA timezone resolution for `Asia/Kolkata`).*
+
+---
+
+### Step 3: Run the Document Ingestion Pipeline
+
+Ingest and index the assessment documents (`employee_handbook.pdf` and `Northwind_Standard_Benefits_Details.pdf`) into the local vector store:
+
 ```bash
-# Ingests employee_handbook.pdf and Northwind_Standard_Benefits_Details.pdf
+# Execute from inside the 'backend' folder:
 python -m app.rag.ingest
 ```
 
-### Seed Appointment Slots
+**Or alternatively from the project root:**
 ```bash
+python scripts/run_ingest.py
+```
+
+**Expected Ingestion Output:**
+```
+============================================================
+NEXUS AI Knowledge Ingestion Pipeline
+============================================================
+Processing: data/documents/employee_handbook.pdf (11 pages)
+Processing: data/documents/Northwind_Standard_Benefits_Details.pdf (104 pages)
+Total pages indexed: 115
+Total chunks created: 460
+Vector index saved to: data/vector_store/index.joblib
+Metadata saved to: data/vector_store/metadata.json
+Ingestion completed successfully.
+```
+
+---
+
+### Step 4: Seed the SQLite Database with Appointment Slots
+
+Initialize the relational database schema (`data/nexus.db`) and populate the appointment slots table with demo availability:
+
+```bash
+# From inside the 'backend' folder:
 python ../scripts/seed_data.py
 ```
+
+**Expected Seeding Output:**
+```
+Initializing database tables...
+Seeding demo appointment slots...
+Database seeding completed successfully.
+```
+
+*(Note: You can re-run `python ../scripts/seed_data.py` at any time to reset all slots to unbooked status).*
 
 ---
 
 ## 19. Running the Application
 
-### Start the FastAPI Backend
+### Option A: Local Development (Recommended)
+
+Running locally provides live hot-reloading for both the FastAPI backend and React frontend.
+
+#### 1. Start the FastAPI Backend Server
+
+Open your first terminal window, activate the virtual environment, and run:
+
 ```bash
 cd backend
-# With virtual environment activated:
+
+# Windows:
+.venv\Scripts\activate
+# Linux/macOS:
+# source .venv/bin/activate
+
 uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload
 ```
-The backend will be live at `http://127.0.0.1:8000` (Swagger docs: `http://127.0.0.1:8000/docs`).
 
-### Start the React Frontend
+The backend will start and output:
+```
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process
+INFO:     Application startup complete.
+```
+
+**Verify Backend Health**:
+- **API Liveness Probe**: [http://127.0.0.1:8000/health](http://127.0.0.1:8000/health) $\rightarrow$ `{"status": "ok", "app": "NEXUS AI"}`
+- **Readiness Probe**: [http://127.0.0.1:8000/api/health/ready](http://127.0.0.1:8000/api/health/ready) $\rightarrow$ Validates database & vector store readiness
+- **Interactive Swagger Documentation**: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+- **ReDoc API Spec**: [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc)
+
+---
+
+#### 2. Start the React Frontend
+
+Open a **second terminal window**, navigate to the `frontend` directory, install packages, and launch Vite:
+
 ```bash
-cd ../frontend
+cd frontend
 npm install
 npm run dev
 ```
-The frontend will be live at `http://localhost:5173`.
+
+The terminal will display:
+```
+  VITE v8.3.0  ready in 240 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+  ➜  press h + enter to show help
+```
+
+Open **`http://localhost:5173`** in your browser (Google Chrome, Microsoft Edge, or Mozilla Firefox).
+
+> **Frontend API Proxy**: During local development, the Vite dev server automatically proxies all requests from `/api/*` and `/health` to `http://localhost:8000` via `vite.config.ts`. If you are running the backend on a different port or host, set `VITE_API_BASE_URL=http://your-host:port` in `frontend/.env`.
+
+---
+
+### Option B: Running with Docker & Docker Compose
+
+If you have Docker Desktop installed, you can launch the complete full-stack platform with a single command:
+
+```bash
+# From the project root:
+docker compose up --build
+```
+
+- **Frontend Application**: `http://localhost:3000`
+- **Backend API & Swagger**: `http://localhost:8000` and `http://localhost:8000/docs`
+- **Data Persistence**: Bound to `./data` on your host machine.
+
+To stop the containers:
+```bash
+docker compose down
+```
+
+---
+
+### Option C: Cloud Deployments
+
+- **Backend (Render)**: Defined in `render.yaml`. Deploys the FastAPI service with automatic Python dependency resolution, document ingestion, and slot seeding.
+- **Frontend (Vercel)**: Defined in `vercel.json`. Builds Vite production assets to `frontend/dist`. Set the environment variable `VITE_API_BASE_URL` in the Vercel dashboard to your deployed Render backend URL (e.g. `https://nexus-ai-backend.onrender.com`).
+
+---
+
+### Step-by-Step Live Verification Walkthrough
+
+Once both servers are running, test each core subsystem to verify complete functionality:
+
+1. **Assistant & RAG Verification**:
+   - Open `http://localhost:5173`.
+   - Ask: *"How many vacation days do I accrue in my first year according to the handbook?"*
+   - Verify the assistant answers using grounded evidence with an expandable citation card citing `employee_handbook.pdf` on Page 4.
+
+2. **Context Interleaving Mid-Booking**:
+   - In the same chat, type: *"I would like to schedule a performance review for Alex Chen, alex.chen@example.com."*
+   - Before picking a slot, interrupt with an inquiry: *"Wait, how often are performance reviews conducted according to the handbook?"*
+   - Verify the agent answers the question from Page 4, **preserves the name and email**, and immediately resumes the booking flow by asking you to select an available time slot.
+   - Choose a time slot (e.g., *"Friday at 10:30 AM"* or click the slot button) and confirm.
+   - Confirm the booking and observe the unique reference card (`NX-XXXXXX`).
+
+3. **Multimodal Voice Mode**:
+   - Click the **Live Voice** button in the header or the mic icon in the composer.
+   - Allow microphone permissions.
+   - Speak your question and watch the sound-reactive **VoiceOrb** oscillate to your voice amplitude in real time.
+   - Test speech recognition and natural text-to-speech feedback with interruption support.
+
+4. **Agent OS Execution Surface**:
+   - Open the **Execution Surface** panel (or press `Ctrl + K`).
+   - Observe live LangGraph state transitions (`router` $\rightarrow$ `faq` $\rightarrow$ `booking` $\rightarrow$ `confirmation`).
+   - Use the **Task Inputs Editor** or test the **Replay Simulation Engine** to safely simulate state execution without mutating real database slots.
 
 ---
 
