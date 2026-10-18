@@ -1,0 +1,55 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Python Virtual Environments
+.venv/
+venv/
+ENV/
+env/
+
+# Testing & Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Node & Frontend
+node_modules/
+dist/
+dist-ssr/
+*.local
+
+# Environment variables & secrets
+.env
+.env.*
+!.env.example
+
+# Local SQLite databases & vector caches (generated runtime artifacts)
+data/nexus.db
+data/nexus.db-journal
+data/nexus.db-shm
+data/nexus.db-wal
+data/checkpoints.db
+data/checkpoints.db-journal
+data/checkpoints.db-shm
+data/checkpoints.db-wal
+
+# Keep vector store data directory and documents committed or tracked
+!data/documents/*.pdf
+!data/vector_store/*
+
+# Logs & Temporary Files
+*.log
+logs/
+temp/
+tmp/
+
+# OS and Editor Files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.swp
+*.swo

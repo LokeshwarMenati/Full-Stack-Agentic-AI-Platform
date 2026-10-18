@@ -1,0 +1,349 @@
+@import "tailwindcss";
+
+@theme {
+  --color-nexus-surface-primary: #030817;
+  --color-nexus-surface-secondary: #071329;
+  --color-nexus-surface-tertiary: #0a1830;
+  --color-nexus-border-primary: #176bff;
+  --color-nexus-border-subtle: #1c3f80;
+  --color-nexus-accent-cyan: #00e5ff;
+  --color-nexus-accent-purple: #873dff;
+  --color-nexus-text-primary: #f4f7ff;
+  --color-nexus-text-secondary: #94a9c8;
+  --color-nexus-text-muted: #5a7199;
+  --spacing-13: 3.25rem;
+}
+
+@layer base {
+  :root {
+    --bg-main: #030817;
+    --bg-sidebar: #050B19;
+    --bg-panel: #071329;
+    --bg-elevated: #0A1830;
+    --accent-blue: #176BFF;
+    --accent-cyan: #00E5FF;
+    --accent-violet: #873DFF;
+    --status-success: #00E6A0;
+    --status-warning: #FFB020;
+    --status-error: #FF3B5C;
+    --text-primary: #F4F7FF;
+    --text-secondary: #94A9C8;
+    --text-muted: #5A7199;
+    --border-subtle: rgba(23, 107, 255, 0.16);
+    --border-luminous: rgba(0, 229, 255, 0.35);
+  }
+
+  body {
+    background-color: #030817;
+    color: #F4F7FF;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Inter', system-ui, sans-serif;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Custom compact futuristic scrollbar */
+  ::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(23, 107, 255, 0.25);
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 229, 255, 0.5);
+  }
+}
+
+/* Cinematic Futuristic Office Environment & Grid */
+.futuristic-bg {
+  background-color: #030817;
+  background-image: 
+    radial-gradient(ellipse 90% 60% at 50% -10%, rgba(135, 61, 255, 0.12), transparent 70%),
+    radial-gradient(circle 800px at 50% 30%, rgba(23, 107, 255, 0.1), transparent 75%),
+    linear-gradient(rgba(23, 107, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(23, 107, 255, 0.03) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 48px 48px, 48px 48px;
+  background-position: 0 0, 0 0, -1px -1px, -1px -1px;
+}
+
+/* Futuristic Cityline / Architecture Subtle Silhouette Effect */
+.futuristic-skyline {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: 
+    linear-gradient(to top, rgba(3, 8, 23, 0.95) 0%, rgba(3, 8, 23, 0.3) 60%, transparent 100%),
+    radial-gradient(ellipse at 50% 120%, rgba(0, 229, 255, 0.06), transparent 60%);
+  opacity: 0.85;
+}
+
+/* Glassmorphism Panels */
+.glass-panel {
+  background: rgba(7, 19, 41, 0.72);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(23, 107, 255, 0.18);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+.glass-panel-interactive {
+  background: rgba(7, 19, 41, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(23, 107, 255, 0.22);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-panel-interactive:hover {
+  background: rgba(10, 24, 48, 0.85);
+  border-color: rgba(0, 229, 255, 0.45);
+  box-shadow: 0 0 25px -4px rgba(0, 229, 255, 0.2), 0 8px 32px 0 rgba(0, 0, 0, 0.45);
+  transform: translateY(-2px);
+}
+
+.composer-glass {
+  background: rgba(7, 19, 41, 0.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 229, 255, 0.32);
+  box-shadow: 0 0 30px -5px rgba(23, 107, 255, 0.25), 0 12px 40px rgba(0, 0, 0, 0.6);
+}
+
+.composer-glass:focus-within {
+  border-color: rgba(0, 229, 255, 0.7);
+  box-shadow: 0 0 35px 0 rgba(0, 229, 255, 0.35), 0 12px 40px rgba(0, 0, 0, 0.7);
+}
+
+/* Luminous Glows */
+.glow-cyan {
+  box-shadow: 0 0 20px -2px rgba(0, 229, 255, 0.4);
+}
+
+.glow-blue {
+  box-shadow: 0 0 20px -2px rgba(23, 107, 255, 0.4);
+}
+
+.glow-violet {
+  box-shadow: 0 0 25px -2px rgba(135, 61, 255, 0.35);
+}
+
+/* Animations */
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spin-reverse {
+  from {
+    transform: rotate(360deg);
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes pulse-sphere {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.9;
+    filter: drop-shadow(0 0 20px rgba(0, 229, 255, 0.65));
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 1;
+    filter: drop-shadow(0 0 35px rgba(135, 61, 255, 0.85));
+  }
+}
+
+@keyframes float-subtle {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes radar-sweep {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes human-speaking {
+  0% {
+    transform: scale(1.02) translateY(0);
+    filter: brightness(1.08) contrast(1.04);
+  }
+  25% {
+    transform: scale(1.05) translateY(-1px);
+    filter: brightness(1.15) contrast(1.06);
+  }
+  50% {
+    transform: scale(1.03) translateY(1px);
+    filter: brightness(1.10) contrast(1.05);
+  }
+  75% {
+    transform: scale(1.06) translateY(-0.5px);
+    filter: brightness(1.18) contrast(1.08);
+  }
+  100% {
+    transform: scale(1.02) translateY(0);
+    filter: brightness(1.08) contrast(1.04);
+  }
+}
+
+@keyframes speech-mouth-glow {
+  0%, 100% {
+    opacity: 0.35;
+    transform: scale(1) translateY(0);
+  }
+  30% {
+    opacity: 0.85;
+    transform: scale(1.18) translateY(2px);
+  }
+  60% {
+    opacity: 0.5;
+    transform: scale(1.05) translateY(-1px);
+  }
+  80% {
+    opacity: 0.9;
+    transform: scale(1.22) translateY(1px);
+  }
+}
+
+@keyframes avatar-blink {
+  0%, 94%, 98%, 100% {
+    transform: scaleY(1);
+  }
+  96% {
+    transform: scaleY(0.08);
+  }
+}
+
+@keyframes avatar-head-nod {
+  0%, 100% {
+    transform: rotate(0deg) translateY(0);
+  }
+  30% {
+    transform: rotate(-0.75deg) translateY(-1px);
+  }
+  70% {
+    transform: rotate(0.85deg) translateY(1.5px);
+  }
+}
+
+@keyframes avatar-thinking-tilt {
+  0%, 100% {
+    transform: rotate(-1.5deg) translateY(-2px) scale(1.02);
+    filter: brightness(1.05) contrast(1.03);
+  }
+  50% {
+    transform: rotate(1.2deg) translateY(0px) scale(1.01);
+    filter: brightness(1.02) contrast(1.02);
+  }
+}
+
+@keyframes lip-sync-jaw {
+  0%, 100% {
+    transform: translateY(0) scaleY(1);
+    filter: brightness(1);
+  }
+  25% {
+    transform: translateY(2.2px) scaleY(1.04);
+    filter: brightness(1.08);
+  }
+  50% {
+    transform: translateY(1.0px) scaleY(1.02);
+    filter: brightness(1.03);
+  }
+  75% {
+    transform: translateY(3.0px) scaleY(1.06);
+    filter: brightness(1.12);
+  }
+}
+
+.animate-avatar-blink {
+  animation: avatar-blink 4.2s ease-in-out infinite;
+  transform-origin: 50% 38%;
+}
+
+.animate-avatar-nod {
+  animation: avatar-head-nod 1.8s ease-in-out infinite alternate;
+}
+
+.animate-avatar-thinking {
+  animation: avatar-thinking-tilt 2.8s ease-in-out infinite alternate;
+}
+
+.animate-lip-sync {
+  animation: lip-sync-jaw 0.28s ease-in-out infinite alternate;
+}
+
+.animate-avatar-speaking {
+  animation: human-speaking 0.42s ease-in-out infinite alternate;
+}
+
+.animate-avatar-breathing {
+  animation: avatar-idle-breathing 4s ease-in-out infinite;
+}
+
+.animate-speech-glow {
+  animation: speech-mouth-glow 0.38s ease-in-out infinite alternate;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.35s ease-out both;
+}
+
+.animate-spin-slow {
+  animation: spin-slow 22s linear infinite;
+}
+
+.animate-spin-reverse {
+  animation: spin-reverse 28s linear infinite;
+}
+
+.animate-sphere-pulse {
+  animation: pulse-sphere 4s ease-in-out infinite;
+}
+
+.animate-float {
+  animation: float-subtle 6s ease-in-out infinite;
+}
+
+/* Accessibility: Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .animate-spin-slow,
+  .animate-spin-reverse,
+  .animate-sphere-pulse,
+  .animate-float {
+    animation: none !important;
+  }
+}

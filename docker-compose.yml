@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: nexus-ai-backend
+    ports:
+      - "8000:8000"
+    environment:
+      - APP_ENV=production
+      - APP_HOST=0.0.0.0
+      - APP_PORT=8000
+      - FRONTEND_ORIGIN=http://localhost:5173,http://localhost:3000,http://localhost:80
+      - DATABASE_URL=sqlite+aiosqlite:///./data/nexus.db
+      - SYNC_DATABASE_URL=sqlite:///./data/nexus.db
+      - CHECKPOINT_DATABASE_PATH=./data/checkpoints.db
+      - LLM_PROVIDER=mock
+      - LLM_MODEL=nexus-dev-deterministic
+      - EMBEDDING_PROVIDER=local
+      - VECTOR_STORE_PATH=./data/vector_store
+      - PRIMARY_DOCUMENT_PATH=./data/documents/employee_handbook.pdf
+      - SECONDARY_DOCUMENT_PATH=./data/documents/Northwind_Standard_Benefits_Details.pdf
+      - TIMEZONE=Asia/Kolkata
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: nexus-ai-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    restart: unless-stopped

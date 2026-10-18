@@ -1,0 +1,21 @@
+{
+  "last_ingested_at": "2026-10-17T17:35:28.433482+00:00",
+  "total_chunks": 460,
+  "doc_stats": {
+    "employee_handbook.pdf": {
+      "filename": "employee_handbook.pdf",
+      "total_pages": 11,
+      "total_chunks": 27,
+      "file_size_bytes": 453757,
+      "last_ingested_at": "2026-10-17T17:35:25.436683Z"
+    },
+    "Northwind_Standard_Benefits_Details.pdf": {
+      "filename": "Northwind_Standard_Benefits_Details.pdf",
+      "total_pages": 104,
+      "total_chunks": 433,
+      "file_size_bytes": 822026,
+      "last_ingested_at": "2026-10-17T17:35:28.265638Z"
+    }
+  },
+  "errors": []
+}
